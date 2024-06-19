@@ -29,7 +29,7 @@ products.forEach((product) => {
           )}</div>
 
           <div class="product-quantity-container">
-            <select>
+            <select class="quantity-selector-${product.id}">
               <option selected value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -45,7 +45,7 @@ products.forEach((product) => {
 
           <div class="product-spacer"></div>
 
-          <div class="added-to-cart">
+          <div class="added-to-cart added-identifier-${product.id}">
             <img src="images/icons/checkmark.png" />
             Added
           </div>
@@ -58,9 +58,11 @@ products.forEach((product) => {
 
 document.querySelector(".products-grid").innerHTML = productsHTML;
 
+const addedMessageTimeouts = {};
+
 document.querySelectorAll(".add-to-cart-button").forEach((button) => {
   button.addEventListener("click", () => {
-    const productId = button.dataset.productId;
+    const { productId } = button.dataset;
 
     let matchingItem;
 
@@ -70,21 +72,40 @@ document.querySelectorAll(".add-to-cart-button").forEach((button) => {
       }
     });
 
+    const quantity = Number(
+      document.querySelector(`.quantity-selector-${productId}`).value
+    );
+
     if (matchingItem) {
-      matchingItem.quantity += 1;
+      matchingItem.quantity += quantity;
     } else {
       cart.push({
-        productId: productId,
-        quantity: 1,
+        productId,
+        quantity,
       });
     }
+
+    let cartQuantity = 0;
+
+    cart.forEach((item) => {
+      cartQuantity += item.quantity;
+    });
+
+    document.querySelector(".cart-quantity").innerHTML = cartQuantity;
+
+    const addedDiv = document.querySelector(`.added-identifier-${productId}`);
+
+    addedDiv.classList.add("added-to-cart-visible");
+
+    const previousTimeoutId = addedMessageTimeouts[productId];
+    if (previousTimeoutId) {
+      clearTimeout(previousTimeoutId);
+    }
+
+    const timeoutId = setTimeout(() => {
+      addedDiv.classList.remove("added-to-cart-visible");
+    }, 2000);
+
+    addedMessageTimeouts[productId] = timeoutId;
   });
 });
-
-let cartQuantity = 0;
-
-cart.forEach((item) => {
-  cartQuantity += item.quantity;
-});
-
-document.querySelector(".cart-quantity").innerHTML = cartQuantity;
