@@ -4,8 +4,6 @@ import { formatCurrency } from "./utils/money.js";
 
 let productsHTML = "";
 
-console.log("helloamazonjs");
-
 products.forEach((product) => {
   productsHTML += `
     <div class="product-container">
