@@ -13,6 +13,7 @@ import { renderPaymentSummary } from "./paymentSummary.js";
 
 export function renderOrderSummary() {
   let cartSummary = "";
+
   cart.forEach((cartItem) => {
     const productId = cartItem.productId;
 
